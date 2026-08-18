@@ -1,0 +1,21 @@
+# Virtual environment
+venv/
+
+# Environment variables / API keys
+.env
+
+# SQLite database
+notes.db
+
+# Uploaded PDFs
+uploads/
+
+# Generated files
+generated/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# macOS files
+.DS_Store
