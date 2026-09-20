@@ -35,7 +35,6 @@ ai-notes-generator/
 ├── .gitignore
 ├── README.md
 ├── requirements.txt
-│
 ├── uploads/
 ├── generated/
 │
