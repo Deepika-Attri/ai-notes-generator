@@ -3,6 +3,8 @@ venv/
 
 # Environment variables / API keys
 .env
+.env.*
+!.env.example
 
 # SQLite database
 notes.db

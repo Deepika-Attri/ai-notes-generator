@@ -10,11 +10,12 @@ from utils.gemini_client import generate_flashcards, generate_quiz, generate_sum
 from utils.pdf_reader import extract_text_from_pdf
 from utils.text_cleaner import clean_text
 
-
+# Page configuration
 st.set_page_config(page_title="AI Notes Generator", page_icon="📚", layout="wide")
 
 CONTENT_TYPES = ("summary", "flashcards", "quiz")
 
+# Initialize session state for generated content and UI state
 # Session state keeps the current draft and job status across reruns.
 for key, value in {
     "summary": "",
@@ -32,12 +33,12 @@ for content_type in CONTENT_TYPES:
     st.session_state.setdefault(f"{content_type}_job", None)
     st.session_state.setdefault(f"{content_type}_error", None)
 
-
+# Create a shared thread pool for background AI generation
 @st.cache_resource
 def get_generation_executor():
     return ThreadPoolExecutor(max_workers=3, thread_name_prefix="notes-generation")
 
-
+# Start an AI generation task in the background
 # Run AI requests in the background so navigation does not cancel them.
 def start_generation(content_type, generator, *args):
     job = st.session_state[f"{content_type}_job"]
@@ -47,7 +48,7 @@ def start_generation(content_type, generator, *args):
             generator, *args
         )
 
-
+# Collect completed background AI tasks
 def collect_completed_generations():
     for content_type in CONTENT_TYPES:
         job = st.session_state[f"{content_type}_job"]
@@ -59,19 +60,18 @@ def collect_completed_generations():
             finally:
                 st.session_state[f"{content_type}_job"] = None
 
-
+# Check whether a generation task is still running
 def generation_in_progress(content_type):
     job = st.session_state[f"{content_type}_job"]
     return job is not None and not job.done()
 
-
+# Create a hash to detect whether generated notes have changed
 def draft_signature(title):
     draft = "\0".join(
         [st.session_state.filename, title.strip()]
         + [st.session_state[content_type] for content_type in CONTENT_TYPES]
     )
     return hashlib.sha256(draft.encode()).hexdigest()
-
 
 # Shared UI for summary, flashcard, and quiz generation.
 def render_generator(
@@ -129,7 +129,7 @@ def render_generator(
             key=f"download_{content_type}",
         )
 
-
+# Display notes saved in the SQLite database
 def render_saved_notes():
     st.header("💾 Saved Notes")
     st.write("Your previously saved notes are stored in SQLite.")
@@ -165,8 +165,7 @@ def render_saved_notes():
                 st.success("Note deleted successfully!")
                 st.rerun()
 
-
-# Collect any background results before rendering the page.
+# Collect completed background results before rendering the page.
 collect_completed_generations()
 
 st.sidebar.title("📚 AI Notes Generator")
@@ -203,6 +202,7 @@ if uploaded_file is not None:
     size_text = f"{size / 1024:.2f} KB" if size < 1024 * 1024 else f"{size / (1024 * 1024):.2f} MB"
     size_column.markdown(f"**Size:** {size_text}")
 
+    # Extract PDF text and clean it before sending it to Gemini.
     text = clean_text(extract_text_from_pdf(uploaded_file))
     st.sidebar.metric("Words", len(text.split()))
     st.sidebar.metric("Characters", len(text))

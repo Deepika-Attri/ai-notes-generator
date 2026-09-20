@@ -1,5 +1,6 @@
 import fitz
 
+
 def extract_text_from_pdf(uploaded_file):
     """
     Extracts text from every page of a PDF.
@@ -12,7 +13,7 @@ def extract_text_from_pdf(uploaded_file):
     extracted_text = ""
 
     for page in pdf_document:
-        extracted_text = page.get_text()
+        extracted_text += page.get_text()
 
     pdf_document.close()
 
