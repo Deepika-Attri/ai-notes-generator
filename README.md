@@ -24,12 +24,6 @@ An AI-powered study assistant that converts PDF study material into summaries, f
 - SQLite
 - PyMuPDF
 - python-dotenv
-* Python
-* Streamlit
-* Google Gemini API
-* SQLite
-* PyMuPDF
-* python-dotenv
 
 ## 📁 Project Structure
 
