@@ -45,8 +45,6 @@ ai-notes-generator/
     ├── text_chunker.py
     ├── gemini_client.py
     └── database.py
-
-    ├── database.py
     └── prompts.py
 ```
 
